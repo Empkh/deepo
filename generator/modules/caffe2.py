@@ -37,16 +37,6 @@ class Caffe2(Module):
                   -D USE_NNPACK=OFF \
                   -D USE_ROCKSDB=OFF \
                   -D BUILD_TEST=OFF \
-                  -D CUDA_ARCH_NAME=Manual \
-                  -D CUDA_ARCH_BIN="35 52 60 61" \
-                  -D CUDA_ARCH_PTX="61" \
                   .. && \
             make -j"$(nproc)" install && \
-            %s
-        ''' % (
-            switcher,
-            '' if pyver == '2.7' else (r'''
-            mv /usr/local/lib/python3/dist-packages/caffe2 \
-                /usr/local/lib/python%s/dist-packages && \
-            ''' % pyver).strip()
-            )
+        ''' % switcher
