@@ -1,0 +1,71 @@
+# ==================================================================
+# module list
+# ------------------------------------------------------------------
+# python        3.5    (apt)
+# tensorflow    1.2.0  (pip)
+# ==================================================================
+
+FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
+RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
+    PIP_INSTALL="python -m pip --no-cache-dir install --upgrade" && \
+    GIT_CLONE="git clone --depth 10" && \
+
+    rm -rf /var/lib/apt/lists/* \
+           /etc/apt/sources.list.d/cuda.list \
+           /etc/apt/sources.list.d/nvidia-ml.list && \
+
+    apt-get update && \
+
+# ==================================================================
+# tools
+# ------------------------------------------------------------------
+
+    DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
+        build-essential \
+        ca-certificates \
+        cmake \
+        wget \
+        git \
+        vim \
+        && \
+
+# ==================================================================
+# python
+# ------------------------------------------------------------------
+
+    DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
+        python3-pip \
+        python3-dev \
+        && \
+    ln -s /usr/bin/python3 /usr/local/bin/python && \
+    pip3 --no-cache-dir install --upgrade pip && \
+    $PIP_INSTALL \
+        setuptools \
+        && \
+    $PIP_INSTALL \
+        numpy \
+        scipy \
+        pandas \
+        scikit-learn \
+        matplotlib \
+        Cython \
+        && \
+
+# ==================================================================
+# tensorflow
+# ------------------------------------------------------------------
+
+    $PIP_INSTALL \
+        tensorflow-gpu==1.2.0 \
+        && \
+
+# ==================================================================
+# config & cleanup
+# ------------------------------------------------------------------
+
+    ldconfig && \
+    apt-get clean && \
+    apt-get autoremove && \
+    rm -rf /var/lib/apt/lists/* /tmp/* ~/*
+
+EXPOSE 6006
